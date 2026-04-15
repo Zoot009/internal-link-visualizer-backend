@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clean Internal Link Graph</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; display: flex; height: 100vh; }
+    #sidebar { width: 300px; border-right: 1px solid #ddd; padding: 12px; overflow:auto; }
+    #graph { flex: 1; position: relative; }
+    h2 { font-size: 16px; margin: 6px 0 10px; }
+    .cluster { margin: 6px 0; }
+    .search { width: 100%; padding: 6px; margin: 6px 0 10px; }
+    .link { stroke: #bbb; stroke-opacity: 0.5; }
+    .node circle { stroke: #fff; stroke-width: 1px; }
+    .node text { font-size: 10px; pointer-events: none; }
+    .tooltip {
+      position: absolute; background: rgba(0,0,0,0.75); color:#fff;
+      padding: 6px 8px; border-radius: 4px; font-size: 12px; pointer-events:none;
+      display:none;
+    }
+    #dropzone {
+      border: 2px dashed #aaa; padding: 10px; margin-top: 8px; text-align: center;
+      color: #666; border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <h2>Load JSON</h2>
+    <input type="file" id="fileInput" accept=".json" />
+    <div id="dropzone">Drop JSON file here</div>
+
+    <h2>Filters</h2>
+    <input id="search" class="search" placeholder="Search URL..." />
+    <label><input type="checkbox" id="hideSelf" checked /> Hide self-links</label>
+    <h2>Clusters</h2>
+    <div id="clusters"></div>
+  </div>
+
+  <div id="graph">
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>
+    let linkGraph = null;
+
+    const width = window.innerWidth - 300;
+    const height = window.innerHeight;
+
+    const svg = d3.select("#graph").append("svg")
+      .attr("width", width).attr("height", height);
+
+    svg.append("defs").append("marker")
+      .attr("id", "arrow").attr("viewBox", "0 -5 10 10")
+      .attr("refX", 12).attr("refY", 0)
+      .attr("markerWidth", 6).attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "#aaa");
+
+    const g = svg.append("g");
+    const tooltip = d3.select("#tooltip");
+    const color = d3.scaleOrdinal(d3.schemeTableau10);
+    let simulation = d3.forceSimulation();
+    let links = [];
+    let nodes = [];
+    let clusterState = {};
+
+    svg.call(d3.zoom().scaleExtent([0.2,5]).on("zoom", e => g.attr("transform", e.transform)));
+
+    function clusterKey(url){
+      const path = url.replace("https://zootwebagency.com", "");
+      if (path === "/" || path === "") return "home";
+      const seg = path.split("/")[1] || "";
+      if (seg.startsWith("what-")) return "what-*";
+      if (seg.startsWith("seo")) return "seo-*";
+      if (seg.startsWith("google")) return "google-*";
+      return seg || "other";
+    }
+
+    function buildGraph(raw){
+      linkGraph = raw.data.linkGraph;
+      const nodesMap = new Map();
+      links = [];
+
+      Object.entries(linkGraph).forEach(([source, targets]) => {
+        if (!nodesMap.has(source)) nodesMap.set(source, { id: source });
+        targets.forEach(target => {
+          if (!nodesMap.has(target)) nodesMap.set(target, { id: target });
+          links.push({ source, target });
+        });
+      });
+
+      nodes = Array.from(nodesMap.values()).map(n => ({
+        ...n, cluster: clusterKey(n.id)
+      }));
+
+      // Build cluster UI
+      const clusterSet = new Set(nodes.map(n => n.cluster));
+      clusterState = {};
+      clusterSet.forEach(c => clusterState[c] = true);
+
+      const clustersDiv = document.getElementById("clusters");
+      clustersDiv.innerHTML = "";
+      clusterSet.forEach(c => {
+        const div = document.createElement("div");
+        div.className = "cluster";
+        div.innerHTML = `<label><input type="checkbox" checked data-cluster="${c}"/> ${c}</label>`;
+        clustersDiv.appendChild(div);
+      });
+
+      clustersDiv.addEventListener("change", (e) => {
+        if (e.target.dataset.cluster) {
+          clusterState[e.target.dataset.cluster] = e.target.checked;
+          render();
+        }
+      });
+
+      render();
+    }
+
+    function render(){
+      const hideSelf = document.getElementById("hideSelf").checked;
+      const search = document.getElementById("search").value.toLowerCase();
+
+      const activeNodes = nodes.filter(n =>
+        clusterState[n.cluster] &&
+        (!search || n.id.toLowerCase().includes(search))
+      );
+      const activeNodeIds = new Set(activeNodes.map(n => n.id));
+
+      const activeLinks = links.filter(l =>
+        activeNodeIds.has(l.source) && activeNodeIds.has(l.target) &&
+        (!hideSelf || l.source !== l.target)
+      );
+
+      simulation = d3.forceSimulation(activeNodes)
+        .force("link", d3.forceLink(activeLinks).id(d => d.id).distance(120))
+        .force("charge", d3.forceManyBody().strength(-300))
+        .force("center", d3.forceCenter(width / 2, height / 2));
+
+      g.selectAll("*").remove();
+
+      const link = g.append("g").selectAll("line")
+        .data(activeLinks).enter().append("line")
+        .attr("class","link")
+        .attr("marker-end","url(#arrow)");
+
+      const node = g.append("g").selectAll("g")
+        .data(activeNodes).enter().append("g")
+        .attr("class","node")
+        .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended));
+
+      node.append("circle")
+        .attr("r", 6)
+        .attr("fill", d => color(d.cluster));
+
+      node.append("text")
+        .attr("x", 8).attr("y", 3)
+        .text(d => d.id.replace("https://", ""));
+
+      node.on("mousemove", (event, d) => {
+        tooltip.style("display","block")
+          .style("left",(event.pageX+10)+"px")
+          .style("top",(event.pageY+10)+"px")
+          .text(d.id);
+      }).on("mouseout", () => tooltip.style("display","none"));
+
+      simulation.on("tick", () => {
+        link.attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+        node.attr("transform", d => `translate(${d.x},${d.y})`);
+      });
+    }
+
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x; d.fy = d.y;
+    }
+    function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null; d.fy = null;
+    }
+
+    document.getElementById("hideSelf").addEventListener("change", render);
+    document.getElementById("search").addEventListener("input", render);
+
+    // File input
+    document.getElementById("fileInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => buildGraph(JSON.parse(reader.result));
+      reader.readAsText(file);
+    });
+
+    // Drag & drop
+    const dropzone = document.getElementById("dropzone");
+    dropzone.addEventListener("dragover", e => { e.preventDefault(); dropzone.style.borderColor="#666"; });
+    dropzone.addEventListener("dragleave", () => dropzone.style.borderColor="#aaa");
+    dropzone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropzone.style.borderColor="#aaa";
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => buildGraph(JSON.parse(reader.result));
+      reader.readAsText(file);
+    });
+
+    // --- Option B: Hardcode JSON instead of file ---
+    // const raw = { ...your JSON... };
+    // buildGraph(raw);
+  </script>
+</body>
+</html>

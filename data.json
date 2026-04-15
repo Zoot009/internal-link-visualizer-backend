@@ -1,0 +1,523 @@
+{
+    "success": true,
+    "data": {
+        "url": "https://zootwebagency.com/",
+        "linkGraph": {
+            "https://zootwebagency.com/": [
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/google-business-profile-optimization",
+                "https://zootwebagency.com/website-design",
+                "https://zootwebagency.com/local-citation-building",
+                "https://zootwebagency.com/link-building",
+                "https://zootwebagency.com/keyword-research-strategy",
+                "https://zootwebagency.com/on-page-seo",
+                "https://zootwebagency.com/technical-seo-optimization",
+                "https://zootwebagency.com/seo-content-writing",
+                "https://zootwebagency.com/google-ads-management",
+                "https://zootwebagency.com/search-engine-marketing-sem",
+                "https://zootwebagency.com/email-marketing-services",
+                "https://zootwebagency.com/franchise-digital-marketing"
+            ],
+            "https://zootwebagency.com/digital-marketing-services": [
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/hospital-digital-marketing-agency?preview_id=4913&preview_nonce=98affa3f64&preview=true"
+            ],
+            "https://zootwebagency.com/seo-case-study": [
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/contact-zoot-web-agency"
+            ],
+            "https://zootwebagency.com/contact": [
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/free-consultation-web-design": [
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact"
+            ],
+            "https://zootwebagency.com/google-business-profile-optimization": [
+                "https://zootwebagency.com/google-business-profile-optimization",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/what-is-gbp-optimization",
+                "https://zootwebagency.com/what-is-google-business-profile"
+            ],
+            "https://zootwebagency.com/website-design": [
+                "https://zootwebagency.com/website-design",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/what-are-professional-web-design-services"
+            ],
+            "https://zootwebagency.com/local-citation-building": [
+                "https://zootwebagency.com/local-citation-building",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/what-are-local-citations-and-why-they-matter-for-local-seo"
+            ],
+            "https://zootwebagency.com/link-building": [
+                "https://zootwebagency.com/link-building",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/how-can-link-building-improve-your-search-rankings"
+            ],
+            "https://zootwebagency.com/keyword-research-strategy": [
+                "https://zootwebagency.com/keyword-research-strategy",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/what-are-keyword-research-strategy-services-for-seo-growth"
+            ],
+            "https://zootwebagency.com/on-page-seo": [
+                "https://zootwebagency.com/on-page-seo",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/on-page-optimization-improve-your-website-rankings"
+            ],
+            "https://zootwebagency.com/technical-seo-optimization": [
+                "https://zootwebagency.com/technical-seo-optimization",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/technical-seo"
+            ],
+            "https://zootwebagency.com/seo-content-writing": [
+                "https://zootwebagency.com/seo-content-writing",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/local-seo-content-writing-for-better-visibility"
+            ],
+            "https://zootwebagency.com/google-ads-management": [
+                "https://zootwebagency.com/google-ads-management",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/what-is-google-ads-management"
+            ],
+            "https://zootwebagency.com/search-engine-marketing-sem": [
+                "https://zootwebagency.com/search-engine-marketing-sem",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/email-marketing-services": [
+                "https://zootwebagency.com/email-marketing-services",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/why-email-marketing-is-essential-for-business-growth"
+            ],
+            "https://zootwebagency.com/franchise-digital-marketing": [
+                "https://zootwebagency.com/franchise-digital-marketing",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/hospital-digital-marketing-agency?preview_id=4913&preview_nonce=98affa3f64&preview=true"
+            ],
+            "https://zootwebagency.com/contact-zoot-web-agency": [
+                "https://zootwebagency.com/contact-zoot-web-agency",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/what-is-gbp-optimization": [
+                "https://zootwebagency.com/what-is-gbp-optimization",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/what-is-google-business-profile": [
+                "https://zootwebagency.com/what-is-google-business-profile",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/what-are-professional-web-design-services": [
+                "https://zootwebagency.com/what-are-professional-web-design-services",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/what-are-local-citations-and-why-they-matter-for-local-seo": [
+                "https://zootwebagency.com/what-are-local-citations-and-why-they-matter-for-local-seo",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/what-are-keyword-research-strategy-services-for-seo-growth": [
+                "https://zootwebagency.com/what-are-keyword-research-strategy-services-for-seo-growth",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/on-page-optimization-improve-your-website-rankings": [
+                "https://zootwebagency.com/on-page-optimization-improve-your-website-rankings",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/technical-seo": [
+                "https://zootwebagency.com/technical-seo",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/local-seo-content-writing-for-better-visibility": [
+                "https://zootwebagency.com/local-seo-content-writing-for-better-visibility",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/seo-content-writing"
+            ],
+            "https://zootwebagency.com/what-is-google-ads-management": [
+                "https://zootwebagency.com/what-is-google-ads-management",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/why-email-marketing-is-essential-for-business-growth": [
+                "https://zootwebagency.com/why-email-marketing-is-essential-for-business-growth",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/search-engine-marketing-services": [
+                "https://zootwebagency.com/search-engine-marketing-services",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/search-engine-marketing-sem",
+                "https://zootwebagency.com/google-ads-management",
+                "https://zootwebagency.com/local-seo-keyword-research"
+            ],
+            "https://zootwebagency.com/what-is-cpa": [
+                "https://zootwebagency.com/what-is-cpa",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/top-50-search-engine-list": [
+                "https://zootwebagency.com/top-50-search-engine-list",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/youtube-ads-management": [
+                "https://zootwebagency.com/youtube-ads-management",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/why-us": [
+                "https://zootwebagency.com/why-us",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/what-are-email-marketing-services": [
+                "https://zootwebagency.com/what-are-email-marketing-services",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/social-media-management": [
+                "https://zootwebagency.com/social-media-management",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/digital-marketing-agency-about"
+            ],
+            "https://zootwebagency.com/social-media-brand-management": [
+                "https://zootwebagency.com/social-media-brand-management",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/shopify-web-design-services": [
+                "https://zootwebagency.com/shopify-web-design-services",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/shopify-seo": [
+                "https://zootwebagency.com/shopify-seo",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/real-estate": [
+                "https://zootwebagency.com/real-estate",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/get-free-quote": [
+                "https://zootwebagency.com/get-free-quote",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/website-design"
+            ],
+            "https://zootwebagency.com/franchise-social-media": [
+                "https://zootwebagency.com/franchise-social-media",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/enterprise-social-media": [
+                "https://zootwebagency.com/enterprise-social-media",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/enterprise-digital-marketing": [
+                "https://zootwebagency.com/enterprise-digital-marketing",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/hospital-digital-marketing-agency?preview_id=4913&preview_nonce=98affa3f64&preview=true"
+            ],
+            "https://zootwebagency.com/digital-marketing-strategy-development": [
+                "https://zootwebagency.com/digital-marketing-strategy-development",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/ecommerce-optimization": [
+                "https://zootwebagency.com/ecommerce-optimization",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/digital-pr": [
+                "https://zootwebagency.com/digital-pr",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ],
+            "https://zootwebagency.com/career-at-digital-marketing-agency": [
+                "https://zootwebagency.com/career-at-digital-marketing-agency",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design",
+                "https://zootwebagency.com/digital-marketing-agency-about"
+            ],
+            "https://zootwebagency.com/branding-services": [
+                "https://zootwebagency.com/branding-services",
+                "https://zootwebagency.com/",
+                "https://zootwebagency.com/digital-marketing-services",
+                "https://zootwebagency.com/seo-case-study",
+                "https://zootwebagency.com/contact",
+                "https://zootwebagency.com/free-consultation-web-design"
+            ]
+        },
+        "inboundLinksCount": {
+            "https://zootwebagency.com/": 48,
+            "https://zootwebagency.com/digital-marketing-services": 48,
+            "https://zootwebagency.com/seo-case-study": 48,
+            "https://zootwebagency.com/contact": 48,
+            "https://zootwebagency.com/free-consultation-web-design": 48,
+            "https://zootwebagency.com/google-business-profile-optimization": 2,
+            "https://zootwebagency.com/website-design": 3,
+            "https://zootwebagency.com/local-citation-building": 2,
+            "https://zootwebagency.com/link-building": 2,
+            "https://zootwebagency.com/keyword-research-strategy": 2,
+            "https://zootwebagency.com/on-page-seo": 2,
+            "https://zootwebagency.com/technical-seo-optimization": 2,
+            "https://zootwebagency.com/seo-content-writing": 3,
+            "https://zootwebagency.com/google-ads-management": 3,
+            "https://zootwebagency.com/search-engine-marketing-sem": 3,
+            "https://zootwebagency.com/email-marketing-services": 2,
+            "https://zootwebagency.com/franchise-digital-marketing": 2,
+            "https://zootwebagency.com/contact-zoot-web-agency": 2,
+            "https://zootwebagency.com/what-is-gbp-optimization": 2,
+            "https://zootwebagency.com/what-is-google-business-profile": 2,
+            "https://zootwebagency.com/what-are-professional-web-design-services": 2,
+            "https://zootwebagency.com/what-are-local-citations-and-why-they-matter-for-local-seo": 2,
+            "https://zootwebagency.com/what-are-keyword-research-strategy-services-for-seo-growth": 2,
+            "https://zootwebagency.com/on-page-optimization-improve-your-website-rankings": 2,
+            "https://zootwebagency.com/technical-seo": 2,
+            "https://zootwebagency.com/local-seo-content-writing-for-better-visibility": 2,
+            "https://zootwebagency.com/what-is-google-ads-management": 2,
+            "https://zootwebagency.com/why-email-marketing-is-essential-for-business-growth": 2,
+            "https://zootwebagency.com/search-engine-marketing-services": 1,
+            "https://zootwebagency.com/what-is-cpa": 1,
+            "https://zootwebagency.com/top-50-search-engine-list": 1,
+            "https://zootwebagency.com/youtube-ads-management": 1,
+            "https://zootwebagency.com/why-us": 1,
+            "https://zootwebagency.com/what-are-email-marketing-services": 1,
+            "https://zootwebagency.com/social-media-management": 1,
+            "https://zootwebagency.com/social-media-brand-management": 1,
+            "https://zootwebagency.com/shopify-web-design-services": 1,
+            "https://zootwebagency.com/shopify-seo": 1,
+            "https://zootwebagency.com/real-estate": 1,
+            "https://zootwebagency.com/get-free-quote": 1,
+            "https://zootwebagency.com/franchise-social-media": 1,
+            "https://zootwebagency.com/enterprise-social-media": 1,
+            "https://zootwebagency.com/enterprise-digital-marketing": 1,
+            "https://zootwebagency.com/digital-marketing-strategy-development": 1,
+            "https://zootwebagency.com/ecommerce-optimization": 1,
+            "https://zootwebagency.com/digital-pr": 1,
+            "https://zootwebagency.com/career-at-digital-marketing-agency": 1,
+            "https://zootwebagency.com/branding-services": 1,
+            "https://zootwebagency.com/hospital-digital-marketing-agency?preview_id=4913&preview_nonce=98affa3f64&preview=true": 3,
+            "https://zootwebagency.com/how-can-link-building-improve-your-search-rankings": 1,
+            "https://zootwebagency.com/local-seo-keyword-research": 1,
+            "https://zootwebagency.com/digital-marketing-agency-about": 2
+        },
+        "orphanPages": [
+            "https://zootwebagency.com/how-can-link-building-improve-your-search-rankings",
+            "https://zootwebagency.com/digital-marketing-agency-about",
+            "https://zootwebagency.com/plumber-local-seo-austin",
+            "https://zootwebagency.com/outbound-marketing",
+            "https://zootwebagency.com/local-seo-keyword-research",
+            "https://zootwebagency.com/elementskit-content/dynamic-content-megamenu-menuitem2074",
+            "https://zootwebagency.com/elementskit-content/dynamic-content-megamenu-menuitem2068",
+            "https://zootwebagency.com/elementskit-content/dynamic-content-megamenu-menuitem2069",
+            "https://zootwebagency.com/elementskit-content/dynamic-content-megamenu-menuitem2477",
+            "https://zootwebagency.com/elementskit-content/dynamic-content-megamenu-menuitem2474",
+            "https://zootwebagency.com/elementskit-content/dynamic-content-megamenu-menuitem2072",
+            "https://zootwebagency.com/?elementskit_template=on-page-seo",
+            "https://zootwebagency.com/category/blog",
+            "https://zootwebagency.com/locations.kml"
+        ],
+        "metadata": {
+            "startTime": "2026-04-14T07:19:00.036Z",
+            "endTime": "2026-04-14T07:25:15.547Z",
+            "durationMs": 375511,
+            "totalPagesCrawled": 50,
+            "totalPagesInSitemap": 61,
+            "maxDepthReached": 2,
+            "errorsEncountered": 2,
+            "errorDetails": [
+                {
+                    "url": "https://zootwebagency.com/hospital-digital-marketing-agency?preview_id=4913&preview_nonce=98affa3f64&preview=true",
+                    "error": "timeout of 30000ms exceeded",
+                    "timestamp": "2026-04-14T07:21:08.436Z"
+                },
+                {
+                    "url": "https://zootwebagency.com/how-can-link-building-improve-your-search-rankings",
+                    "error": "Decompression failed",
+                    "timestamp": "2026-04-14T07:21:38.150Z"
+                }
+            ]
+        },
+        "stats": {
+            "totalPages": 48,
+            "totalLinks": 317,
+            "avgOutboundLinks": 6.6,
+            "avgInboundLinks": 6.1,
+            "maxInboundLinks": 48,
+            "pagesWithNoInbound": 0
+        }
+    },
+    "startedAt": "2026-04-14T07:18:59.119Z",
+    "completedAt": "2026-04-14T07:25:15.568Z",
+    "duration": 376449
+}

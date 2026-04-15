@@ -1,0 +1,39 @@
+I want a backend which would generate a map of internal links for a given website. 
+The backend should be built using Node.js and Express, and it should use TypeScript for type safety. 
+The backend will have an endpoint that accepts a URL as a query parameter, crawls the website starting 
+from that URL, and generates a map of internal links. The map should be returned as a JSON response.
+For extracting links from the HTML content, we can use a library like Cheerio, which provides a 
+jQuery-like syntax for traversing and manipulating the DOM. We will also need to handle asynchronous 
+operations for crawling the website, so we can use async/await syntax for better readability. 
+To avoid crawling the same page multiple times, we can maintain a set of visited URLs. We will also 
+need to ensure that we only crawl internal links, which can be done by checking if the link starts 
+with the base URL of the website. Finally, we can structure the code in a modular way, separating the 
+crawling logic from the Express route handling. This will make the code easier to maintain and test. 
+Overall, the backend will consist of an Express server with a single endpoint for generating the internal
+link map, and a separate module for the crawling logic that uses Cheerio to extract links and builds the 
+map of internal links. If a site has bot protection, we can use scrape.do api to bypass it. Read the documents
+of scrape.do from https://scrape.do/documentation/. Then we would fetch the sitemap of the website to compare it 
+with our internal linking map to figure out orphan pages. But the problem is that not all websites have a sitemap, 
+so we can only do this for websites that have a sitemap. We can use the sitemap-parser library to parse the sitemap 
+and extract the URLs. We can then compare the URLs from the sitemap with the URLs in our internal linking map to 
+identify any orphan pages. The final response from our endpoint can include both the internal linking map and a list 
+of orphan pages (if a sitemap is available). Another problem we would have is that some websites might have a large 
+number of pages, which could lead to performance issues when crawling. To mitigate this, we can implement a depth 
+limit for crawling, which will prevent the crawler from going too deep into the website. We can also implement a 
+rate limit to avoid overwhelming the server with requests. Additionally, we can use a queue to manage the URLs that 
+need to be crawled, which will help us control the flow of the crawling process and ensure that we don't exceed our 
+limits. Finally, we can also implement error handling to gracefully handle any issues that arise during the crawling 
+process, such as network errors or invalid URLs. But if we use scrape.do api, we might not need to worry about some 
+of these issues, as the API is designed to handle them. We can simply make requests to the API with the target URL 
+and let it handle the crawling and link extraction for us. This would simplify our implementation and allow us to 
+focus on processing the results and generating the internal link map. Another problem would be that if we have a depth 
+limit we would crawl a certain amount of page lets 30 pages, so when we compare it with the sitemap.xml which would 
+contain lets say 100 urls. There will be an problem identifying orphan pages.
+
+
+Implement saving the internal link map and orphan pages to a database for future reference using prisma as the ORM and PostgreSQL as the database. 
+Create a new table or model for the internal link map, which would include fields for the URL, the list of internal links, and a timestamp for when the data was generated.
+Also create a new table or model for orphan pages, which would include fields for the URL, the source of the orphan page (e.g., sitemap or internal link map), and a timestamp. 
+When the endpoint is called and the internal link map and orphan pages are generated, save this data to the respective tables in the database using Prisma.
+Also save the credits used for the API calls to scrape.do in a separate table, which would include fields for the number of credits used, the date of the API call, and the target URL.
+Here is the url that explains the costs for scrape.do api: https://scrape.do/documentation/api-response/request-costs/.
