@@ -68,9 +68,9 @@ else
   echo "✅ DATABASE_URL is set (${#DATABASE_URL} characters)"
 fi
 
-# Sync database schema with Prisma
-echo "🔄 Syncing database schema..."
-npx prisma db push --accept-data-loss
+# Note: Database schema should be set up in Supabase beforehand
+# Prisma 7 config doesn't work with CLI commands like 'prisma db push'
+echo "⚠️  Skipping schema sync - ensure Supabase DB schema is already set up"
 
 echo "🚀 Starting application..."
 # Start the Node.js application
