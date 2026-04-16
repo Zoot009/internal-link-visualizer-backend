@@ -8,7 +8,7 @@ COPY package*.json ./
 COPY tsconfig.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY prisma ./prisma
@@ -30,7 +30,7 @@ RUN apk add --no-cache redis
 
 # Copy package files and install production dependencies
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --production
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
