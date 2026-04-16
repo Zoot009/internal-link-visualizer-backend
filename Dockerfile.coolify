@@ -1,0 +1,80 @@
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY prisma ./prisma
+COPY src ./src
+
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Build TypeScript
+RUN npm run build
+
+# Production stage with Redis
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install Redis
+RUN apk add --no-cache redis
+
+# Copy package files and install production dependencies
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copy built files from builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+
+# Copy prisma schema
+COPY prisma ./prisma
+
+# Create startup script that runs Redis and Node.js
+RUN cat > /app/start.sh <<'EOF'
+#!/bin/sh
+set -e
+
+echo "🚀 Starting Redis server..."
+# Start Redis in background
+redis-server --daemonize yes --bind 127.0.0.1 --port 6379 --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+# Wait for Redis to be ready
+echo "⏳ Waiting for Redis to be ready..."
+until redis-cli ping 2>/dev/null | grep -q PONG; do
+  echo "   Redis not ready yet, waiting..."
+  sleep 1
+done
+
+echo "✅ Redis is ready!"
+
+# Sync database schema with Prisma
+echo "🔄 Syncing database schema..."
+npx prisma db push --accept-data-loss
+
+echo "🚀 Starting application..."
+# Start the Node.js application
+exec node dist/index.js
+EOF
+
+RUN chmod +x /app/start.sh
+
+# Expose application port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); });"
+
+# Start the application
+CMD ["/app/start.sh"]

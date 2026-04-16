@@ -171,10 +171,8 @@ export async function getJobStatusHandler(req: Request, res: Response): Promise<
 
     // Add short result info if completed
     if (state === 'completed' && returnvalue) {
-      response.resultSummary = {
+      response.resultSummary = returnvalue.summary || {
         success: returnvalue.success,
-        pagesCrawled: returnvalue.data?.metadata?.totalPagesCrawled,
-        orphanPages: returnvalue.data?.orphanPages?.length,
       };
       response.resultUrl = `/api/jobs/${jobId}/result`;
     }
@@ -229,10 +227,10 @@ export async function getJobResultHandler(req: Request, res: Response): Promise<
       return;
     }
 
-    // Get the result
-    const result = job.returnvalue;
+    // Get the result summary from job
+    const resultSummary = job.returnvalue;
 
-    if (!result) {
+    if (!resultSummary || !resultSummary.success) {
       res.status(404).json({
         error: 'Result not found',
         message: 'Job completed but result data is not available',
@@ -240,8 +238,54 @@ export async function getJobResultHandler(req: Request, res: Response): Promise<
       return;
     }
 
-    // Return the full result
-    res.json(result);
+    // Fetch full results from database
+    const { getCrawlJobByJobId } = await import('../services/database.js');
+    const dbResult = await getCrawlJobByJobId(jobId);
+
+    if (!dbResult) {
+      res.status(404).json({
+        error: 'Result not found in database',
+        message: 'Job completed but result data could not be retrieved from database',
+      });
+      return;
+    }
+
+    // Build full response from database data
+    const linkGraph: Record<string, string[]> = {};
+    for (const link of dbResult.internalLinks) {
+      linkGraph[link.sourceUrl] = link.targetUrls as string[];
+    }
+
+    const inboundLinksCount: Record<string, number> = {};
+    for (const link of dbResult.internalLinks) {
+      inboundLinksCount[link.sourceUrl] = link.inboundCount;
+    }
+
+    const orphanPages = dbResult.orphanPages.map(op => op.url);
+
+    // Return full result with data from database
+    res.json({
+      success: true,
+      data: {
+        url: dbResult.targetUrl,
+        linkGraph,
+        inboundLinksCount,
+        orphanPages,
+        metadata: {
+          startTime: dbResult.startedAt,
+          endTime: dbResult.completedAt,
+          durationMs: dbResult.durationMs,
+          totalPagesCrawled: dbResult.totalPagesCrawled,
+          totalPagesInSitemap: dbResult.totalPagesInSitemap,
+          maxDepthReached: dbResult.maxDepthReached,
+          errorsEncountered: dbResult.errorsEncountered,
+        },
+        stats: resultSummary.summary?.stats || {},
+      },
+      startedAt: resultSummary.startedAt,
+      completedAt: resultSummary.completedAt,
+      duration: resultSummary.duration,
+    });
   } catch (error) {
     console.error('Error getting job result:', error);
     

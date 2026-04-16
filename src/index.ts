@@ -11,6 +11,8 @@ import {
   getJobResultHandler,
   listJobsHandler 
 } from "./routes/jobs.js";
+import { externalAnalyzeHandler } from "./routes/external.js";
+import { requireApiKey, requireApiKeyMulti, requireWhitelistedIp } from "./middleware/auth.js";
 import { createCrawlWorker, closeWorker } from "./queue/worker.js";
 import { closeQueue } from "./queue/config.js";
 import { closePrisma } from "./services/database.js";
@@ -27,11 +29,13 @@ app.get("/", (req, res) => {
   res.json({
     status: "running",
     message: "Internal Linking Analysis API",
-    version: "2.0.0",
+    version: "2.1.0",
     endpoints: {
+      // External/public endpoint (no database persistence)
+      externalAnalyze: "GET /api/external/analyze?url=<target-url>",
       // Legacy synchronous endpoint
       analyze: "/api/analyze?url=<target-url>",
-      // New job-based async endpoints
+      // Job-based async endpoints (with database persistence)
       submitJob: "POST /api/jobs/submit",
       listJobs: "GET /api/jobs",
       jobStatus: "GET /api/jobs/:jobId/status",
@@ -41,20 +45,64 @@ app.get("/", (req, res) => {
   });
 });
 
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({ status: "healthy", timestamp: new Date().toISOString() });
+// Health check endpoint with Redis and Database connectivity checks
+app.get("/health", async (req, res) => {
+  try {
+    const health = {
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      redis: false,
+      database: false,
+    };
+
+    // Check Redis connectivity
+    try {
+      const { redis } = await import("./utils/redis.js");
+      await redis.ping();
+      health.redis = true;
+    } catch (error) {
+      console.error("Health check - Redis error:", error);
+    }
+
+    // Check Database connectivity
+    try {
+      const { prisma } = await import("./utils/prisma.js");
+      await prisma.$queryRaw`SELECT 1`;
+      health.database = true;
+    } catch (error) {
+      console.error("Health check - Database error:", error);
+    }
+
+    // Return 503 if any service is down
+    if (!health.redis || !health.database) {
+      return res.status(503).json({ ...health, status: "unhealthy" });
+    }
+
+    res.json(health);
+  } catch (error) {
+    res.status(503).json({
+      status: "unhealthy",
+      timestamp: new Date().toISOString(),
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
 });
 
-// Legacy synchronous analysis endpoint (for backward compatibility)
-app.get("/api/analyze", analyzeHandler);
+// External/public analysis endpoint (no database persistence)
+// Apply authentication middleware to require API key
+app.get("/api/external/analyze", requireApiKey, externalAnalyzeHandler);
 
-// Job-based async endpoints
-app.post("/api/jobs/submit", submitJobHandler);
-app.get("/api/jobs/submit", submitJobHandler); // Also support GET for convenience
-app.get("/api/jobs", listJobsHandler);
-app.get("/api/jobs/:jobId/status", getJobStatusHandler);
-app.get("/api/jobs/:jobId/result", getJobResultHandler);
+// Legacy synchronous analysis endpoint (for backward compatibility)
+// Protected with authentication
+app.get("/api/analyze", requireApiKey, analyzeHandler);
+
+// Job-based async endpoints (with database persistence)
+// All protected with authentication
+app.post("/api/jobs/submit", requireApiKey, submitJobHandler);
+app.get("/api/jobs/submit", requireApiKey, submitJobHandler); // Also support GET for convenience
+app.get("/api/jobs", requireApiKey, listJobsHandler);
+app.get("/api/jobs/:jobId/status", requireApiKey, getJobStatusHandler);
+app.get("/api/jobs/:jobId/result", requireApiKey, getJobResultHandler);
 
 // Start the worker
 let worker: Worker | null = null;

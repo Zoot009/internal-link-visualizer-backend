@@ -121,14 +121,19 @@ async function processCrawlJob(job: Job<CrawlJobData>): Promise<CrawlJobResult> 
       totalCreditsUsed
     );
 
+    // Return only a summary to avoid Redis size limits
+    // Full data is already saved to database and can be retrieved from there
     const resultData: CrawlJobResult = {
       success: true,
-      data: {
+      summary: {
         url: config.baseUrl,
-        linkGraph: analysis.linkGraph,
-        inboundLinksCount: analysis.inboundLinksCount,
-        orphanPages: analysis.orphanPages,
-        metadata: analysis.metadata,
+        pagesCrawled: metadata.totalPagesCrawled,
+        pagesInSitemap: metadata.totalPagesInSitemap,
+        internalLinksCount: Object.keys(analysis.linkGraph).length,
+        orphanPagesCount: analysis.orphanPages.length,
+        maxDepthReached: metadata.maxDepthReached,
+        errorsEncountered: metadata.errorsEncountered,
+        totalCreditsUsed,
         stats,
       },
       startedAt: startTime.toISOString(),

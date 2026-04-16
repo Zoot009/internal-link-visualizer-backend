@@ -2,20 +2,22 @@
 
 Complete API specification for the Internal Linking Analysis service.
 
-**Version:** 2.0.0  
+**Version:** 2.1.0  
 **Base URL:** `http://localhost:3000` (development)  
 **Protocol:** HTTP/HTTPS  
 **Format:** JSON
+**Authentication:** API Key (required for most endpoints)
 
 ---
 
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [API Endpoints](#api-endpoints)
-3. [Data Models](#data-models)
-4. [Error Handling](#error-handling)
-5. [Examples](#examples)
+2. [Authentication](#authentication)
+3. [API Endpoints](#api-endpoints)
+4. [Data Models](#data-models)
+5. [Error Handling](#error-handling)
+6. [Examples](#examples)
 
 ---
 
@@ -42,6 +44,75 @@ The Internal Linking Analyzer API provides asynchronous website crawling and int
 - **Crawling:** ScrapeDo API for web scraping
 - **Parsing:** Sitemapper for sitemap discovery
 - **Storage:** In-memory job results with Redis persistence
+- **Authentication:** API Key-based authentication for endpoint security
+
+---
+
+## Authentication
+
+Most API endpoints require authentication using an API key. Public endpoints (root and health check) do not require authentication.
+
+### API Key Authentication
+
+Provide your API key using one of the following methods:
+
+#### 1. Authorization Header (Recommended)
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+#### 2. X-API-Key Header
+```bash
+X-API-Key: YOUR_API_KEY
+```
+
+#### 3. Query Parameter
+```bash
+?apiKey=YOUR_API_KEY
+```
+
+### Authentication Responses
+
+**Missing API Key (401 Unauthorized):**
+```json
+{
+  "error": "Authentication required",
+  "message": "Please provide an API key",
+  "methods": [
+    "Header: Authorization: Bearer YOUR_API_KEY",
+    "Header: X-API-Key: YOUR_API_KEY",
+    "Query: ?apiKey=YOUR_API_KEY"
+  ]
+}
+```
+
+**Invalid API Key (403 Forbidden):**
+```json
+{
+  "error": "Invalid API key",
+  "message": "The provided API key is not valid"
+}
+```
+
+### Protected Endpoints
+
+The following endpoints **require authentication**:
+- `/api/external/analyze` - External analysis (no database)
+- `/api/analyze` - Legacy synchronous analysis
+- `/api/jobs/submit` - Submit crawl job
+- `/api/jobs` - List jobs
+- `/api/jobs/:jobId/status` - Job status
+- `/api/jobs/:jobId/result` - Job results
+
+### Public Endpoints
+
+The following endpoints are **publicly accessible**:
+- `/` - API information
+- `/health` - Health check
+
+### Configuration
+
+To disable authentication (development only), leave `API_KEY` unset in environment variables. See [AUTHENTICATION.md](./AUTHENTICATION.md) for detailed setup instructions.
 
 ---
 
@@ -53,7 +124,7 @@ Retrieve API version and available endpoints.
 
 **Endpoint:** `GET /`
 
-**Authentication:** None required
+**Authentication:** None required (public endpoint)
 
 **Request Parameters:** None
 
@@ -72,8 +143,9 @@ Host: localhost:3000
 {
   "status": "running",
   "message": "Internal Linking Analysis API",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "endpoints": {
+    "externalAnalyze": "GET /api/external/analyze?url=<target-url>",
     "analyze": "/api/analyze?url=<target-url>",
     "submitJob": "POST /api/jobs/submit",
     "listJobs": "GET /api/jobs",
@@ -103,7 +175,7 @@ Check if the API service is operational.
 
 **Endpoint:** `GET /health`
 
-**Authentication:** None required
+**Authentication:** None required (public endpoint)
 
 **Request Parameters:** None
 
@@ -146,7 +218,203 @@ Host: localhost:3000
 
 ---
 
-### 3. Submit Crawl Job
+### 3. External Analysis (No Database)
+
+Perform one-time website analysis without database persistence. Designed for external users who need immediate results without job management overhead.
+
+**Endpoint:** `GET /api/external/analyze`
+
+**Authentication:** **Required** - API Key
+
+**Request Parameters:**
+
+| Parameter | Type | Required | Default | Min | Max | Description |
+|-----------|------|----------|---------|-----|-----|-------------|
+| `url` | string | **Yes** | - | - | - | Full URL of website to analyze (must include http:// or https://) |
+| `maxPages` | integer | No | 100 | 1 | 500 | Maximum number of pages to crawl (lower limit for external users) |
+| `maxDepth` | integer | No | 3 | 0 | 10 | Maximum depth from homepage (0 = homepage only) |
+| `rateLimit` | integer | No | 500 | 0 | 5000 | Delay between requests in milliseconds |
+| `token` | string | No | - | - | - | ScrapeDo token (uses SCRAPE_DO_TOKEN env if omitted) |
+| `includeStats` | string | No | 'true' | - | - | Whether to include statistics ('true' or 'false') |
+
+**Request Example:**
+```bash
+GET /api/external/analyze?url=https://example.com&maxPages=50&maxDepth=2 HTTP/1.1
+Host: localhost:3000
+Authorization: Bearer YOUR_API_KEY
+```
+
+**Success Response:**
+
+**Code:** `200 OK`
+
+**Response Body:**
+```json
+{
+  "success": true,
+  "url": "https://example.com",
+  "internalLinks": [
+    {
+      "url": "https://example.com/",
+      "links": [
+        "https://example.com/about",
+        "https://example.com/blog",
+        "https://example.com/contact"
+      ],
+      "depth": 0,
+      "inboundLinks": 25
+    },
+    {
+      "url": "https://example.com/about",
+      "links": [
+        "https://example.com/",
+        "https://example.com/team"
+      ],
+      "depth": 0,
+      "inboundLinks": 8
+    }
+  ],
+  "orphanPages": [
+    {
+      "url": "https://example.com/forgotten-page",
+      "source": "sitemap",
+      "reason": "Not linked from any crawled page"
+    }
+  ],
+  "metadata": {
+    "totalPagesCrawled": 50,
+    "totalPagesInSitemap": 75,
+    "maxDepthReached": 2,
+    "errorsEncountered": 3,
+    "crawlDuration": 45000,
+    "startTime": "2026-04-16T10:30:00.000Z",
+    "endTime": "2026-04-16T10:30:45.000Z"
+  },
+  "stats": {
+    "totalPages": 50,
+    "totalLinks": 342,
+    "avgOutboundLinks": 6.84,
+    "avgInboundLinks": 6.84,
+    "maxInboundLinks": 25,
+    "pagesWithNoInbound": 1
+  }
+}
+```
+
+**Response Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `success` | boolean | Always `true` for successful requests |
+| `url` | string | Base URL that was analyzed |
+| `internalLinks` | array | Array of page objects with their outbound links |
+| `internalLinks[].url` | string | Page URL |
+| `internalLinks[].links` | array | Outbound links from this page |
+| `internalLinks[].depth` | integer | Crawl depth (0 = homepage level) |
+| `internalLinks[].inboundLinks` | integer | Number of pages linking to this page |
+| `orphanPages` | array | Pages with zero inbound links |
+| `orphanPages[].url` | string | Orphan page URL |
+| `orphanPages[].source` | string | Where page was discovered (e.g., "sitemap") |
+| `orphanPages[].reason` | string | Why it's considered orphaned |
+| `metadata` | object | Crawl execution details |
+| `metadata.totalPagesCrawled` | integer | Pages successfully crawled |
+| `metadata.totalPagesInSitemap` | integer | Pages found in sitemap |
+| `metadata.maxDepthReached` | integer | Maximum depth level reached |
+| `metadata.errorsEncountered` | integer | Total errors during crawl |
+| `metadata.crawlDuration` | integer | Crawl time in milliseconds |
+| `metadata.startTime` | string | ISO 8601 timestamp when crawl started |
+| `metadata.endTime` | string | ISO 8601 timestamp when crawl finished |
+| `stats` | object | Statistical analysis (if includeStats=true) |
+| `stats.totalPages` | integer | Total pages discovered |
+| `stats.totalLinks` | integer | Total internal links found |
+| `stats.avgOutboundLinks` | number | Average links per page (outbound) |
+| `stats.avgInboundLinks` | number | Average links per page (inbound) |
+| `stats.maxInboundLinks` | integer | Highest inbound link count |
+| `stats.pagesWithNoInbound` | integer | Count of orphan pages |
+
+**Error Responses:**
+
+#### Authentication Required (401)
+
+**Response Body:**
+```json
+{
+  "error": "Authentication required",
+  "message": "Please provide an API key"
+}
+```
+
+#### Invalid API Key (403)
+
+**Response Body:**
+```json
+{
+  "error": "Invalid API key",
+  "message": "The provided API key is not valid"
+}
+```
+
+#### Missing URL Parameter (400)
+
+**Response Body:**
+```json
+{
+  "error": "Missing required parameter: url",
+  "message": "Please provide a valid URL to analyze",
+  "example": "/api/external/analyze?url=https://example.com"
+}
+```
+
+#### Invalid URL Format (400)
+
+**Response Body:**
+```json
+{
+  "error": "Invalid URL format",
+  "message": "Please provide a valid HTTP or HTTPS URL"
+}
+```
+
+#### Invalid maxPages Parameter (400)
+
+**Response Body:**
+```json
+{
+  "error": "Invalid maxPages parameter",
+  "message": "maxPages must be between 1 and 500"
+}
+```
+
+#### Invalid maxDepth Parameter (400)
+
+**Response Body:**
+```json
+{
+  "error": "Invalid maxDepth parameter",
+  "message": "maxDepth must be between 0 and 10"
+}
+```
+
+#### Internal Server Error (500)
+
+**Response Body:**
+```json
+{
+  "error": "Internal server error",
+  "message": "An unexpected error occurred during analysis"
+}
+```
+
+**Key Differences from Job-Based API:**
+- ✅ No job management required - immediate results
+- ✅ No database persistence - results not saved
+- ✅ Lower resource limits (maxPages: 500 vs 1000)
+- ✅ Synchronous response (waits for completion)
+- ✅ Ideal for one-time analysis or external integrations
+
+---
+
+### 4. Submit Crawl Job
 
 Submit a new website crawl and analysis job.
 
@@ -154,7 +422,7 @@ Submit a new website crawl and analysis job.
 
 **Alternative:** `GET /api/jobs/submit` (query parameters)
 
-**Authentication:** None required
+**Authentication:** **Required** - API Key
 
 **Content-Type:** `application/json` (for POST)
 
@@ -171,6 +439,7 @@ Submit a new website crawl and analysis job.
 ```bash
 POST /api/jobs/submit HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer YOUR_API_KEY
 Content-Type: application/json
 
 {
@@ -185,6 +454,7 @@ Content-Type: application/json
 ```bash
 GET /api/jobs/submit?url=https://example.com&maxPages=500&maxDepth=5&rateLimit=500 HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer YOUR_API_KEY
 ```
 
 **Success Response:**
@@ -298,15 +568,39 @@ Host: localhost:3000
 }
 ```
 
+#### Authentication Required (401)
+
+**Code:** `401 Unauthorized`
+
+**Response Body:**
+```json
+{
+  "error": "Authentication required",
+  "message": "Please provide an API key"
+}
+```
+
+#### Invalid API Key (403)
+
+**Code:** `403 Forbidden`
+
+**Response Body:**
+```json
+{
+  "error": "Invalid API key",
+  "message": "The provided API key is not valid"
+}
+```
+
 ---
 
-### 4. Get Job Status
+### 5. Get Job Status
 
 Retrieve the current status and progress of a crawl job.
 
 **Endpoint:** `GET /api/jobs/:jobId/status`
 
-**Authentication:** None required
+**Authentication:** **Required** - API Key
 
 **URL Parameters:**
 
@@ -318,6 +612,7 @@ Retrieve the current status and progress of a crawl job.
 ```bash
 GET /api/jobs/crawl-1713039000000-abc123/status HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer YOUR_API_KEY
 ```
 
 **Success Response:**
@@ -481,13 +776,13 @@ Job encountered an error.
 
 ---
 
-### 5. Get Job Result
+### 6. Get Job Result
 
 Retrieve the complete analysis results for a completed job.
 
 **Endpoint:** `GET /api/jobs/:jobId/result`
 
-**Authentication:** None required
+**Authentication:** **Required** - API Key
 
 **URL Parameters:**
 
@@ -499,6 +794,7 @@ Retrieve the complete analysis results for a completed job.
 ```bash
 GET /api/jobs/crawl-1713039000000-abc123/result HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer YOUR_API_KEY
 ```
 
 **Success Response:**
@@ -689,13 +985,13 @@ Returned when job is still `waiting`, `active`, or `failed`.
 
 ---
 
-### 6. List Jobs
+### 7. List Jobs
 
 Retrieve a list of all jobs with optional filtering.
 
 **Endpoint:** `GET /api/jobs`
 
-**Authentication:** None required
+**Authentication:** **Required** - API Key
 
 **Query Parameters:**
 
@@ -709,14 +1005,17 @@ Retrieve a list of all jobs with optional filtering.
 # Get all jobs (default)
 GET /api/jobs HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer YOUR_API_KEY
 
 # Get only completed jobs
 GET /api/jobs?state=completed HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer YOUR_API_KEY
 
 # Get last 10 active jobs
 GET /api/jobs?state=active&limit=10 HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer YOUR_API_KEY
 ```
 
 **Success Response:**
@@ -781,7 +1080,7 @@ Host: localhost:3000
 
 ---
 
-### 7. Synchronous Analysis (Legacy)
+### 8. Synchronous Analysis (Legacy)
 
 **⚠️ Deprecated:** Use job-based endpoints instead for better reliability.
 
@@ -789,7 +1088,7 @@ Perform synchronous website analysis (blocks until complete).
 
 **Endpoint:** `GET /api/analyze`
 
-**Authentication:** None required
+**Authentication:** **Required** - API Key
 
 **Query Parameters:**
 
@@ -804,6 +1103,7 @@ Perform synchronous website analysis (blocks until complete).
 ```bash
 GET /api/analyze?url=https://example.com&maxPages=100&maxDepth=3 HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer YOUR_API_KEY
 ```
 
 **Success Response:**
@@ -907,6 +1207,8 @@ string[]
 | `200` | OK | Request succeeded |
 | `202` | Accepted | Job submitted successfully |
 | `400` | Bad Request | Invalid parameters or precondition not met |
+| `401` | Unauthorized | API key missing or authentication required |
+| `403` | Forbidden | API key invalid or access denied |
 | `404` | Not Found | Resource (job) not found |
 | `500` | Internal Server Error | Server-side error occurred |
 | `503` | Service Unavailable | Service is down (health check) |
@@ -925,7 +1227,7 @@ All error responses follow this structure:
 
 ### Common Error Scenarios
 
-#### 1. Invalid URL
+#### 2. Invalid URL
 
 **Trigger:** URL missing protocol or invalid format
 
@@ -939,7 +1241,31 @@ All error responses follow this structure:
 
 **Solution:** Ensure URL starts with `http://` or `https://`
 
-#### 2. Job Not Found
+#### 3or": "Invalid API key",
+  "message": "The provided API key is not valid"
+}
+```
+
+**Solution:** 
+- Ensure API_KEY is set in server environment variables
+- Verify you're including the key in your request
+- Check for typos in the API key
+
+#### 2. Invalid URL
+
+**Trigger:** URL missing protocol or invalid format
+
+**Response:**
+```json
+{
+  "error": "Invalid URL format",
+  "message": "Please provide a valid HTTP or HTTPS URL"
+}
+```
+
+**Solution:** Ensure URL starts with `http://` or `https://`
+
+#### 3. Job Not Found
 
 **Trigger:** Requesting status/result for non-existent jobId
 
@@ -953,7 +1279,7 @@ All error responses follow this structure:
 
 **Solution:** Verify jobId is correct and job wasn't deleted
 
-#### 3. Job Not Ready
+#### 4. Job Not Ready
 
 **Trigger:** Requesting results before job completes
 
@@ -968,7 +1294,7 @@ All error responses follow this structure:
 
 **Solution:** Poll status endpoint until state is `completed`
 
-#### 4. Parameter Validation
+#### 5. Parameter Validation
 
 **Trigger:** Invalid parameter values (negative numbers, out of range)
 
@@ -982,7 +1308,7 @@ All error responses follow this structure:
 
 **Solution:** Check parameter constraints in endpoint documentation
 
-#### 5. Server Configuration
+#### 6. Server Configuration
 
 **Trigger:** Missing environment variables (SCRAPE_DO_TOKEN)
 
@@ -1000,14 +1326,39 @@ All error responses follow this structure:
 
 ## Examples
 
-### Complete Workflow Example (cURL)
+### Testing Authentication
+
+Use the included test script to verify authentication is working correctly:
 
 ```bash
+# Set your API key
+export API_KEY="your_api_key_here"
+
+# Run authentication tests
+./test-auth.sh
+```
+
+The script will test all authentication scenarios:
+- ✅ Request without API key (should fail with 401)
+- ✅ Request with invalid API key (should fail with 403)
+- ✅ Request with valid API key (should succeed)
+- ✅ All three authentication methods (Bearer, X-API-Key, query param)
+- ✅ Public endpoints (should be accessible without auth)
+
+---
+
+## Complete Workflow Example (cURL)
+
+```bash
+# Set your API key
+API_KEY="your_api_key_here"
+
 # 1. Check API health
 curl http://localhost:3000/health
 
 # 2. Submit crawl job
 RESPONSE=$(curl -X POST http://localhost:3000/api/jobs/submit \
+  -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "url": "https://example.com",
@@ -1021,7 +1372,8 @@ echo "Job ID: $JOB_ID"
 
 # 3. Poll job status (repeat until completed)
 while true; do
-  STATUS=$(curl http://localhost:3000/api/jobs/$JOB_ID/status)
+  STATUS=$(curl -H "Authorization: Bearer $API_KEY" \
+    http://localhost:3000/api/jobs/$JOB_ID/status)
   STATE=$(echo $STATUS | jq -r '.state')
   
   echo "Status: $STATE"
@@ -1037,8 +1389,23 @@ while true; do
 done
 
 # 4. Get results
-curl http://localhost:3000/api/jobs/$JOB_ID/result | jq '.' > analysis.json
+curl -H "Authorization: Bearer $API_KEY" \
+  http://localhost:3000/api/jobs/$JOB_ID/result | jq '.' > analysis.json
 echo "Results saved to analysis.json"
+```
+
+### External Analysis Example (cURL)
+
+```bash
+# Set your API key
+API_KEY="your_api_key_here"
+
+# One-time analysis without job management
+curl -H "Authorization: Bearer $API_KEY" \
+  "http://localhost:3000/api/external/analyze?url=https://example.com&maxPages=50&maxDepth=2" \
+  | jq '.' > analysis.json
+
+echo "Analysis complete! Results saved to analysis.json"
 ```
 
 ### Example with Python
@@ -1049,9 +1416,13 @@ import time
 import json
 
 BASE_URL = "http://localhost:3000"
+API_KEY = "your_api_key_here"
+HEADERS = {"Authorization": f"Bearer {API_KEY}"}
 
 # Submit job
-response = requests.post(f"{BASE_URL}/api/jobs/submit", json={
+response = requests.post(f"{BASE_URL}/api/jobs/submit", 
+    headers=HEADERS,
+    json={
     "url": "https://example.com",
     "maxPages": 100,
     "maxDepth": 3,
@@ -1064,7 +1435,7 @@ print(f"Job submitted: {job_id}")
 
 # Poll until complete
 while True:
-    status_response = requests.get(f"{BASE_URL}/api/jobs/{job_id}/status")
+    status_response = requests.get(f"{BASE_URL}/api/jobs/{job_id}/status", headers=HEADERS)
     status = status_response.json()
     
     state = status["state"]
@@ -1084,7 +1455,7 @@ while True:
     time.sleep(2)
 
 # Get results
-result_response = requests.get(f"{BASE_URL}/api/jobs/{job_id}/result")
+result_response = requests.get(f"{BASE_URL}/api/jobs/{job_id}/result", headers=HEADERS)
 result = result_response.json()
 
 # Save to file
@@ -1103,12 +1474,17 @@ print(f"Results saved to analysis.json")
 const fetch = require('node-fetch');
 
 const BASE_URL = 'http://localhost:3000';
+const API_KEY = 'your_api_key_here';
+const HEADERS = {
+  'Authorization': `Bearer ${API_KEY}`,
+  'Content-Type': 'application/json'
+};
 
 async function analyzeWebsite(url) {
   // Submit job
   const submitResponse = await fetch(`${BASE_URL}/api/jobs/submit`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: HEADERS,
     body: JSON.stringify({
       url,
       maxPages: 100,
@@ -1124,7 +1500,9 @@ async function analyzeWebsite(url) {
   do {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    const statusResponse = await fetch(`${BASE_URL}/api/jobs/${jobId}/status`);
+    const statusResponse = await fetch(`${BASE_URL}/api/jobs/${jobId}/status`, {
+      headers: HEADERS
+    });
     status = await statusResponse.json();
     
     if (status.progress) {
@@ -1139,7 +1517,9 @@ async function analyzeWebsite(url) {
   } while (status.state !== 'completed');
   
   // Get results
-  const resultResponse = await fetch(`${BASE_URL}/api/jobs/${jobId}/result`);
+  const resultResponse = await fetch(`${BASE_URL}/api/jobs/${jobId}/result`, {
+    headers: HEADERS
+  });
   const result = await resultResponse.json();
   
   console.log('\nAnalysis complete!');
@@ -1163,7 +1543,19 @@ analyzeWebsite('https://example.com')
 
 ## Best Practices
 
-### 1. Always Poll with Delays
+### 1. Secure Your API Key
+
+Always keep your API key secure and never commit it to version control.
+
+```bash
+# Good - use environment variable
+export API_KEY="your_secret_key"
+
+# Bad - hardcoded in scripts
+API_KEY="abc123..."  # ❌ Don't do this
+```
+
+### 2. Always Poll with Delays
 
 Don't poll faster than every 1-2 seconds to avoid unnecessary server load.
 
@@ -1175,7 +1567,7 @@ setInterval(checkStatus, 2000);
 setInterval(checkStatus, 100); // Too frequent
 ```
 
-### 2. Handle All Job States
+### 3. Handle All Job States
 
 Always check for `failed` state to catch errors.
 
@@ -1188,7 +1580,7 @@ if (status.state === 'completed') {
 }
 ```
 
-### 3. Store JobId for Resume
+### 4. Store JobId for Resume
 
 Save the jobId to resume monitoring after disconnection.
 
@@ -1202,7 +1594,7 @@ if (jobId) {
 }
 ```
 
-### 4. Set Appropriate Timeouts
+### 5. Set Appropriate Timeouts
 
 For large crawls, set long timeouts or no timeout.
 
@@ -1212,7 +1604,7 @@ fetch(url, {
 });
 ```
 
-### 5. Validate URLs Before Submitting
+### 6. Validate URLs Before Submitting
 
 Check URL format client-side before API call.
 
@@ -1226,6 +1618,25 @@ function isValidUrl(url) {
   }
 }
 ```
+
+### 7. Use Authorization Header
+
+Prefer the `Authorization: Bearer` header over query parameters for better security.
+
+```bash
+# Good - header based (more secure)
+curl -H "Authorization: Bearer $API_KEY" \
+  "http://localhost:3000/api/external/analyze?url=https://example.com"
+
+# Less secure - query parameter (visible in logs)
+curl "http://localhost:3000/api/external/analyze?url=https://example.com&apiKey=$API_KEY"
+```
+
+### 8. Choose the Right Endpoint
+
+- Use `/api/external/analyze` for quick one-time analysis
+- Use `/api/jobs/submit` for tracked analysis with database persistence
+- Use `/api/analyze` only for legacy compatibility (deprecated)
 
 ---
 
@@ -1242,7 +1653,14 @@ function isValidUrl(url) {
 
 ## Changelog
 
-### Version 2.0.0 (Current)
+### Version 2.1.0 (Current)
+- ✅ API Key authentication for security
+- ✅ New `/api/external/analyze` endpoint (no database persistence)
+- ✅ Lower resource limits for external users
+- ✅ Comprehensive authentication documentation
+- ✅ Multiple API key authentication methods
+
+### Version 2.0.0
 - ✅ Job-based async API with BullMQ
 - ✅ Real-time progress tracking
 - ✅ Enhanced error reporting
@@ -1253,6 +1671,7 @@ function isValidUrl(url) {
 - ✅ Synchronous `/api/analyze` endpoint
 - ❌ No progress tracking
 - ❌ Limited error handling
+- ❌ No authentication
 
 ---
 
@@ -1261,9 +1680,11 @@ function isValidUrl(url) {
 - **GitHub Repository:** [Link to repo]
 - **API Status:** Check `/health` endpoint
 - **Documentation:** [/docs](/docs)
+- **Authentication Guide:** [AUTHENTICATION.md](./AUTHENTICATION.md)
+- **Testing Guide:** [API_TESTING_GUIDE.md](./API_TESTING_GUIDE.md)
 
 ---
 
-**Last Updated:** April 14, 2026  
+**Last Updated:** April 16, 2026  
 **Maintainer:** Internal Linking Analyzer Team  
 **License:** MIT
