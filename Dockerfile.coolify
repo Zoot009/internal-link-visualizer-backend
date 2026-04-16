@@ -30,7 +30,7 @@ RUN apk add --no-cache redis
 
 # Copy package files and install production dependencies
 COPY package*.json ./
-RUN npm ci --production
+RUN npm install --production
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
